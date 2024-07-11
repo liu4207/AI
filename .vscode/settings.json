@@ -30,6 +30,7 @@
         "audioplay.h": "c",
         "es8388.h": "c",
         "wavplay.h": "c",
-        "gpio.h": "c"
+        "gpio.h": "c",
+        "i2s_std.h": "c"
     }
 }

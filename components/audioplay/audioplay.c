@@ -2,7 +2,8 @@
 // #define AUDIOPLAY_H
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
-// #include "driver/i2s.h"
+// #include "i2s.h"
+#include "driver/i2s.h"
 #include "driver/i2s_std.h"
 #include "esp_log.h"
 // void audioplay_init(void);
@@ -7389,6 +7390,7 @@ void audioplay_init(void) {
 //     }
 // }
 void audioplay_start(i2s_port_t i2s_num) {
+    i2s_start(I2S_NUM_0);
     size_t bytes_written = 0;
     ESP_LOGI(TAG, "Writing audio data to I2S...");
     esp_err_t result = i2s_write(i2s_num, pcm_data, sizeof(pcm_data), &bytes_written, portMAX_DELAY);
