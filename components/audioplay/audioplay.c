@@ -2,7 +2,8 @@
 // #define AUDIOPLAY_H
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
-#include "driver/i2s.h"
+// #include "driver/i2s.h"
+#include "driver/i2s_std.h"
 #include "esp_log.h"
 // void audioplay_init(void);
 // void audioplay_start(void);

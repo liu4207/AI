@@ -30,6 +30,10 @@ void app_main(void) {
     // Initialize ES8388
     es8388_init();
 
+
+    es8388_set_volume(33);
+
+    
     // Load and play PCM audio
         ESP_LOGI(TAG, "Initializing audio play...");
     audioplay_init();

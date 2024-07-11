@@ -1,7 +1,7 @@
 {
     "version":            "1.1",
     "project_name":       "sound",
-    "project_version":    "e2256a1-dirty",
+    "project_version":    "ca3d093-dirty",
     "project_path":       "C:/Users/lsk/Desktop/ESP32/sound",
     "idf_path":           "C:/Users/lsk/esp/v5.1.4/esp-idf",
     "build_dir":          "C:/Users/lsk/Desktop/ESP32/sound/build",

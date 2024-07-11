@@ -5,9 +5,22 @@
 #include "esp_log.h"
 static const char *TAG = "i2s";
 
+void i2s_trx_start(void)
+{
+    i2s_start(I2S_NUM_0);
+    }
+    void i2s_trx_stop(void)
+    {
+        i2s_stop(I2S_NUM_0);
+        }
+void i2s_deinit(void)
+{
+    i2s_driver_uninstall(I2S_NUM_0);
+    
+}
 void i2s_init() {
     i2s_config_t i2s_config = {
-        .mode = (i2s_mode_t)(I2S_MODE_MASTER | I2S_MODE_TX | I2S_MODE_RX),
+        .mode = I2S_MODE_MASTER | I2S_MODE_TX ,
         .sample_rate = 44100,
         .bits_per_sample = I2S_BITS_PER_SAMPLE_16BIT,
         .channel_format = I2S_CHANNEL_FMT_RIGHT_LEFT,
@@ -26,19 +39,7 @@ void i2s_init() {
         .data_in_num = 14,
         .mck_io_num = 3 // 设置主时钟引脚
     };
-void i2s_trx_start(void)
-{
-    i2s_start(I2S_NUM_0);
-    }
-    void i2s_trx_stop(void)
-    {
-        i2s_stop(I2S_NUM_0);
-        }
-void i2s_deinit(void)
-{
-    i2s_driver_uninstall(I2S_NUM_0);
-    
-}
+
 
     // i2s_driver_install(I2S_NUM_0, &i2s_config, 0, NULL);
     // i2s_set_pin(I2S_NUM_0, &pin_config);
