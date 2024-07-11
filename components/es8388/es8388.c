@@ -3,12 +3,15 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "driver/i2c.h"
-// #include "i2c.h"
+#include "esp_log.h"
+
+// #include "i2c.h"/
 #define ES8388_ADDR 0x20  // 根据具体ES8388地址进行修改
 #define I2C_MASTER_NUM I2C_NUM_0
 #define I2C_MASTER_SCL_IO 42
 #define I2C_MASTER_SDA_IO 41
 #define I2C_MASTER_FREQ_HZ 400000
+static const char *TAG = "ES8388";
 
 
 // i2c_obj_t es8388_i2c_master;
@@ -101,6 +104,7 @@ void es8388_init() {
     }
     // 初始化其他寄存器
     // ... 根据需求添加其他寄存器初始化代码
+    ESP_LOGI(TAG, "ES8388 initialization complete");
 
     vTaskDelay(pdMS_TO_TICKS(100));  // 延时100ms等待复位完成
 }
