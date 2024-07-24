@@ -414,12 +414,22 @@ endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
+  include("C:/Users/lsk/Desktop/ESP32/sound/build/esp-idf/es8388/cmake_install.cmake")
+endif()
+
+if(NOT CMAKE_INSTALL_LOCAL_ONLY)
+  # Include the install script for the subdirectory.
   include("C:/Users/lsk/Desktop/ESP32/sound/build/esp-idf/i2s/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("C:/Users/lsk/Desktop/ESP32/sound/build/esp-idf/es8388/cmake_install.cmake")
+  include("C:/Users/lsk/Desktop/ESP32/sound/build/esp-idf/spi/cmake_install.cmake")
+endif()
+
+if(NOT CMAKE_INSTALL_LOCAL_ONLY)
+  # Include the install script for the subdirectory.
+  include("C:/Users/lsk/Desktop/ESP32/sound/build/esp-idf/xl9555/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)

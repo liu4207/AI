@@ -63,8 +63,10 @@ C:/Users/lsk/Desktop/ESP32/sound/build/esp-idf/ulp/libulp.a
 C:/Users/lsk/Desktop/ESP32/sound/build/esp-idf/usb/libusb.a
 C:/Users/lsk/Desktop/ESP32/sound/build/esp-idf/wifi_provisioning/libwifi_provisioning.a
 C:/Users/lsk/Desktop/ESP32/sound/build/esp-idf/i2c/libi2c.a
-C:/Users/lsk/Desktop/ESP32/sound/build/esp-idf/i2s/libi2s.a
 C:/Users/lsk/Desktop/ESP32/sound/build/esp-idf/es8388/libes8388.a
+C:/Users/lsk/Desktop/ESP32/sound/build/esp-idf/i2s/libi2s.a
+C:/Users/lsk/Desktop/ESP32/sound/build/esp-idf/spi/libspi.a
+C:/Users/lsk/Desktop/ESP32/sound/build/esp-idf/xl9555/libxl9555.a
 C:/Users/lsk/Desktop/ESP32/sound/build/esp-idf/wavplay/libwavplay.a
 C:/Users/lsk/Desktop/ESP32/sound/build/esp-idf/audioplay/libaudioplay.a
 C:/Users/lsk/Desktop/ESP32/sound/build/esp-idf/main/libmain.a

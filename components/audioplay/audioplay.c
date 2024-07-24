@@ -42,10 +42,10 @@ void audioplay_init(void) {
 void audioplay_start(i2s_port_t i2s_num) {
     i2s_start(I2S_NUM_0);
     size_t bytes_written = 0;
-        i2s_write(i2s_num, pcm_data, sizeof(pcm_data), &bytes_written, portMAX_DELAY);
+        i2s_write(i2s_num, pcm_data, sizeof(pcm_data), &bytes_written, 100);
 
     ESP_LOGI(TAG, "Writing audio data to I2S...");
-    esp_err_t result = i2s_write(i2s_num, pcm_data, sizeof(pcm_data), &bytes_written, portMAX_DELAY);
+    esp_err_t result = i2s_write(i2s_num, pcm_data, sizeof(pcm_data), &bytes_written, 100);
     if (result == ESP_OK) {
         ESP_LOGI(TAG, "Audio data written to I2S, bytes written: %d", bytes_written);
     } else {

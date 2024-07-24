@@ -3,7 +3,8 @@
 #include "driver/gpio.h"
 #include "driver/i2c.h"
 #include "esp_err.h"
-esp_err_t i2c_master_init(void);
+
+
 typedef struct _i2c_obj_t {
     i2c_port_t port;
     gpio_num_t scl;
@@ -15,6 +16,7 @@ typedef struct _i2c_buf_t {
     size_t len;
     uint8_t *buf;
 } i2c_buf_t;
+extern i2c_obj_t iic_master[I2C_NUM_MAX];
 
 /* 读写标志位 */
 #define I2C_FLAG_READ                   (0x01)                                                          /* 读标志 */
@@ -30,4 +32,6 @@ typedef struct _i2c_buf_t {
 #define I2C_MASTER_TX_BUF_DISABLE       0                                                               /* I2C主机不需要缓冲区 */
 #define I2C_MASTER_RX_BUF_DISABLE       0                                                               /* I2C主机不需要缓冲区 */
 #define ACK_CHECK_EN                    0x1                                                             /* I2C master将从slave检查ACK */
+i2c_obj_t iic_init(uint8_t iic_port);                                                                   /* 初始化IIC */
+esp_err_t i2c_transfer(i2c_obj_t *self, uint16_t addr, size_t n, i2c_buf_t *bufs, unsigned int flags);  /* IIC读写数据 */
 #endif // I2C_H

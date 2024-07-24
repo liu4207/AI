@@ -1,40 +1,97 @@
+/**
+ ****************************************************************************************************
+ * @file        iic.c
+ * @author      正点原子团队(ALIENTEK)
+ * @version     V1.0
+ * @date        2023-08-26
+ * @brief       IIC驱动代码
+ * @license     Copyright (c) 2020-2032, 广州市星翼电子科技有限公司
+ ****************************************************************************************************
+ * @attention
+ *
+ * 实验平台:正点原子 ESP32-S3 开发板
+ * 在线视频:www.yuanzige.com
+ * 技术论坛:www.openedv.com
+ * 公司网址:www.alientek.com
+ * 购买地址:openedv.taobao.com
+ *
+ ****************************************************************************************************
+ */
+
 #include "i2c.h"
-#include "driver/i2c.h"
-#include "esp_log.h"
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
-static const char *TAG = "i2c";
 
-esp_err_t i2c_master_init(void) {
-        int i2c_master_port = I2C_NUM_0;
 
-    i2c_config_t conf = {
-        .mode = I2C_MODE_MASTER,
-        .sda_io_num = 41,  // SDA引脚
-        .sda_pullup_en = GPIO_PULLUP_ENABLE,
-        .scl_io_num = 42,  // SCL引脚
-        .scl_pullup_en = GPIO_PULLUP_ENABLE,
-        .master.clk_speed = 400000    // I2C时钟速度
-    };
-    esp_err_t err = i2c_param_config(I2C_NUM_0, &conf);
-    if (err != ESP_OK) {
-        ESP_LOGE(TAG, "I2C param config failed: %s", esp_err_to_name(err));
-        return err;
-    }else{
-        ESP_LOGI(TAG, "I2C param config succeed...");
-        // return err;
+i2c_obj_t iic_master[I2C_NUM_MAX];  /* 为IIC0和IIC1分别定义IIC控制块结构体 */
+
+/**
+ * @brief       初始化IIC
+ * @param       iic_port：I2C编号(I2C_NUM_0 / I2C_NUM_1)
+ * @retval      IIC控制块0 / IIC控制块1
+ */
+i2c_obj_t iic_init(uint8_t iic_port)
+{
+    uint8_t i;
+    i2c_config_t iic_config_struct = {0};
+
+    if (iic_port == I2C_NUM_0)
+    {
+        i = 0;
     }
-     err=i2c_driver_install(I2C_NUM_0, conf.mode, 0, 0, 0);
-     if (err != ESP_OK) {
-        ESP_LOGE(TAG, "I2C driver install failed: %s", esp_err_to_name(err));
-        return err;
-           }else{
-         ESP_LOGI(TAG, "I2C driver installed successfully");
+    else
+    {
+        i = 1;
+    }
+    
+    iic_master[i].port = iic_port;
+    iic_master[i].init_flag = ESP_FAIL;
+
+    if (iic_master[i].port == I2C_NUM_0)
+    {
+        iic_master[i].scl = IIC0_SCL_GPIO_PIN;
+        iic_master[i].sda = IIC0_SDA_GPIO_PIN;
+    }
+    else
+    {
+        iic_master[i].scl = IIC1_SCL_GPIO_PIN;
+        iic_master[i].sda = IIC1_SDA_GPIO_PIN;
     }
 
-    return err;
+    iic_config_struct.mode = I2C_MODE_MASTER;                               /* 设置IIC模式-主机模式 */
+    iic_config_struct.sda_io_num = iic_master[i].sda;                       /* 设置IIC_SDA引脚 */
+    iic_config_struct.scl_io_num = iic_master[i].scl;                       /* 设置IIC_SCL引脚 */
+    iic_config_struct.sda_pullup_en = GPIO_PULLUP_ENABLE;                   /* 配置IIC_SDA引脚上拉使能 */
+    iic_config_struct.scl_pullup_en = GPIO_PULLUP_ENABLE;                   /* 配置IIC_SCL引脚上拉使能 */
+    iic_config_struct.master.clk_speed = IIC_FREQ;                          /* 设置IIC通信速率 */
+    i2c_param_config(iic_master[i].port, &iic_config_struct);               /* 设置IIC初始化参数 */
+
+    /* 激活I2C控制器的驱动 */
+    iic_master[i].init_flag = i2c_driver_install(iic_master[i].port,        /* 端口号 */
+                                                 iic_config_struct.mode,    /* 主机模式 */
+                                                 I2C_MASTER_RX_BUF_DISABLE, /* 从机模式下接收缓存大小(主机模式不使用) */
+                                                 I2C_MASTER_TX_BUF_DISABLE, /* 从机模式下发送缓存大小(主机模式不使用) */     
+                                                 0);                        /* 用于分配中断的标志(通常从机模式使用) */            
+
+    if (iic_master[i].init_flag != ESP_OK)
+    {
+        while(1)
+        {
+            printf("%s , ret: %d", __func__, iic_master[i].init_flag);
+            vTaskDelay(1000);
+        }
+    }
+
+    return iic_master[i];
 }
 
+/**
+ * @brief       IIC读写数据
+ * @param       self：设备控制块
+ * @param       addr：设备地址
+ * @param       n   ：数据大小
+ * @param       bufs：要发送的数据或者是读取的存储区
+ * @param       flags：读写标志位
+ * @retval      无
+ */
 esp_err_t i2c_transfer(i2c_obj_t *self, uint16_t addr, size_t n, i2c_buf_t *bufs, unsigned int flags)
 {
     int data_len = 0;
