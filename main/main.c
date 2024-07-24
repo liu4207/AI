@@ -13,8 +13,11 @@ static const char *TAG = "main";
 
 void app_main(void) {
     // Initialize I2C
-    i2c_master_init();
-
+    esp_err_t i2c_ret = i2c_master_init();
+    if (i2c_ret != ESP_OK) {
+        ESP_LOGE("app_main", "I2C initialization failed");
+        return;  // I2C initialization failed, handle error accordingly
+    }
     // Initialize I2S
         ESP_LOGI(TAG, "Installing I2S driver...");
 
@@ -28,12 +31,15 @@ void app_main(void) {
 //         return;
 //     }
     // Initialize ES8388
+    // ESP_LOGI(TAG, "Initializing ES8388...");
+    // if (es8388_init() != ESP_OK) {
+    //     ESP_LOGE(TAG, "ES8388 initialization failed");
+    //     return;
+    // }
     es8388_init();
-
-
     es8388_set_volume(33);
 
-    
+
     // Load and play PCM audio
         ESP_LOGI(TAG, "Initializing audio play...");
     audioplay_init();

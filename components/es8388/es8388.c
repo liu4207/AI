@@ -28,28 +28,40 @@ static const char *TAG = "ES8388";
 //     return ESP_OK;
 // }
 
-void es8388_write_reg(uint8_t reg, uint8_t val) {
+// void es8388_write_reg(uint8_t reg, uint8_t val) {
+//     i2c_cmd_handle_t cmd = i2c_cmd_link_create();
+//     i2c_master_start(cmd);
+//     i2c_master_write_byte(cmd, (ES8388_ADDR << 1) | I2C_MASTER_WRITE, true);
+//     i2c_master_write_byte(cmd, reg, true);
+//     i2c_master_write_byte(cmd, val, true);
+//     i2c_master_stop(cmd);
+//     i2c_master_cmd_begin(I2C_MASTER_NUM, cmd, 1000 / portTICK_PERIOD_MS);
+//     i2c_cmd_link_delete(cmd);
+//     // esp_err_t ret_val = ESP_OK;
+//     //     if (ret_val != ESP_OK)
+//     // {
+//     //     while(1)
+//     //     {
+//     //         printf("ES8388初始化失败！！！\r\n");
+//     //         vTaskDelay(500);
+//     //     }
+//     // }
+//     // else
+//     // {
+//     //     printf("ES8388初始化成功！！！\r\n");
+//     // }
+// }
+
+esp_err_t es8388_write_reg(uint8_t reg_addr, uint8_t data) {
     i2c_cmd_handle_t cmd = i2c_cmd_link_create();
     i2c_master_start(cmd);
     i2c_master_write_byte(cmd, (ES8388_ADDR << 1) | I2C_MASTER_WRITE, true);
-    i2c_master_write_byte(cmd, reg, true);
-    i2c_master_write_byte(cmd, val, true);
+    i2c_master_write_byte(cmd, reg_addr, true);
+    i2c_master_write_byte(cmd, data, true);
     i2c_master_stop(cmd);
-    i2c_master_cmd_begin(I2C_MASTER_NUM, cmd, 1000 / portTICK_PERIOD_MS);
+    esp_err_t err = i2c_master_cmd_begin(I2C_MASTER_NUM, cmd, 1000 / portTICK_PERIOD_MS);
     i2c_cmd_link_delete(cmd);
-    // esp_err_t ret_val = ESP_OK;
-    //     if (ret_val != ESP_OK)
-    // {
-    //     while(1)
-    //     {
-    //         printf("ES8388初始化失败！！！\r\n");
-    //         vTaskDelay(500);
-    //     }
-    // }
-    // else
-    // {
-    //     printf("ES8388初始化成功！！！\r\n");
-    // }
+    return err;
 }
 void es8388_adda_cfg(uint8_t dacen, uint8_t adcen) {
     uint8_t tempreg = 0;
@@ -116,7 +128,7 @@ void es8388_init() {
      es8388_write_reg(0x17, 0x18);    /* DAC 音频数据为16bit */
      es8388_write_reg(0x18, 0x02);    /* DAC 配置 MCLK/采样率=256 */
      es8388_write_reg(0x1A, 0x00);    /* DAC数字音量控制将信号衰减 L  设置为最小！！！ */
-     es8388_write_reg(0x1B, 0x00);    /* DAC数字音量控制将信号衰减 R  设置为最小！！！ */
+     es8388_write_reg(0x1B, 0x00);       /* DAC数字音量控制将信号衰减 R  设置为最小！！！ */
      es8388_write_reg(0x27, 0xB8);    /* L混频器 */
      es8388_write_reg(0x2A, 0xB8);    /* R混频器 */
     vTaskDelay(100);
@@ -137,4 +149,39 @@ void es8388_set_volume(uint8_t volume) {
     es8388_write_reg(0x2F, volume); // Right headphone volume
     es8388_write_reg(0x30, volume); // Left speaker volume
     es8388_write_reg(0x31, volume); // Right speaker volume
+}/**
+ * @brief       ES8388 ADC输出通道配置
+ * @param       in : 输入通道
+ *    @arg      0, 通道1输入
+ *    @arg      1, 通道2输入
+ * @retval      无
+ */
+void es8388_input_cfg(uint8_t in)
+{
+    es8388_write_reg(0x0A, (5 * in) << 4);   /* ADC1 输入通道选择L/R	INPUT1 */
 }
+/**
+ * @brief       设置3D环绕声
+ * @param       depth : 0 ~ 7(3D强度,0关闭,7最强)
+ * @retval      无
+ */
+void es8388_3d_set(uint8_t depth)
+{
+    depth &= 0x7;       /* 限定范围 */
+    es8388_write_reg(0x1D, depth << 2);    /* R7,3D环绕设置 */
+}
+// void es8388_adda_cfg(uint8_t dacen, uint8_t adcen) {
+//     uint8_t tempreg = 0;
+//     tempreg |= !dacen << 0;
+//     tempreg |= !adcen << 1;
+//     tempreg |= !dacen << 2;
+//     tempreg |= !adcen << 3;
+//     es8388_write_reg(0x02, tempreg);
+// }
+
+// void es8388_output_cfg(uint8_t o1en, uint8_t o2en) {
+//     uint8_t tempreg = 0;
+//     tempreg |= o1en * (3 << 4);
+//     tempreg |= o2en * (3 << 2);
+//     es8388_write_reg(0x04, tempreg);
+// }

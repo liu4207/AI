@@ -1,7 +1,13 @@
 #include "i2c.h"
 #include "driver/i2c.h"
+#include "esp_log.h"
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
+static const char *TAG = "i2c";
 
-void i2c_master_init() {
+esp_err_t i2c_master_init(void) {
+        int i2c_master_port = I2C_NUM_0;
+
     i2c_config_t conf = {
         .mode = I2C_MODE_MASTER,
         .sda_io_num = 41,  // SDA引脚
@@ -10,8 +16,23 @@ void i2c_master_init() {
         .scl_pullup_en = GPIO_PULLUP_ENABLE,
         .master.clk_speed = 400000    // I2C时钟速度
     };
-    i2c_param_config(I2C_NUM_0, &conf);
-    i2c_driver_install(I2C_NUM_0, conf.mode, 0, 0, 0);
+    esp_err_t err = i2c_param_config(I2C_NUM_0, &conf);
+    if (err != ESP_OK) {
+        ESP_LOGE(TAG, "I2C param config failed: %s", esp_err_to_name(err));
+        return err;
+    }else{
+        ESP_LOGI(TAG, "I2C param config succeed...");
+        // return err;
+    }
+     err=i2c_driver_install(I2C_NUM_0, conf.mode, 0, 0, 0);
+     if (err != ESP_OK) {
+        ESP_LOGE(TAG, "I2C driver install failed: %s", esp_err_to_name(err));
+        return err;
+           }else{
+         ESP_LOGI(TAG, "I2C driver installed successfully");
+    }
+
+    return err;
 }
 
 esp_err_t i2c_transfer(i2c_obj_t *self, uint16_t addr, size_t n, i2c_buf_t *bufs, unsigned int flags)

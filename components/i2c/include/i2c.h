@@ -3,7 +3,7 @@
 #include "driver/gpio.h"
 #include "driver/i2c.h"
 #include "esp_err.h"
-void i2c_master_init(void);
+esp_err_t i2c_master_init(void);
 typedef struct _i2c_obj_t {
     i2c_port_t port;
     gpio_num_t scl;
